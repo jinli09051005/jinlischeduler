@@ -26,18 +26,12 @@ import (
 
 const Name = "Jinli"
 
-const (
-	// LeastAllocated strategy prioritizes nodes with least allocated resources.
-	LeastAllocated string = "LeastAllocated"
-	// MostAllocated strategy prioritizes nodes with most allocated resources.
-	MostAllocated string = "MostAllocated"
-)
-
 type Jinli struct {
 	handle framework.Handle
 	Args   *config.NodeResourcesFitArgs
 }
 
+var _ = framework.Plugin(&Jinli{})
 var _ = framework.PreFilterPlugin(&Jinli{})
 var _ = framework.FilterPlugin(&Jinli{})
 var _ = framework.ScorePlugin(&Jinli{})

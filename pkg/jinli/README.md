@@ -51,4 +51,10 @@ profiles:
     prebind:
       enabled:
       - name: Jinli
+    pluginConfig:
+    - name: Jinli
+      args:
+        NodeResourcesFitArgs:
+          scoringStrategy:
+            type: MostAllocated
 ```

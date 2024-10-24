@@ -21,14 +21,24 @@ data:
     profiles:
     - schedulerName: jinli-scheduler
       plugins:
-        filter:
-          enabled:
-        - name: Jinli
-        score:
-        - name: Jinli
-        bind:
-          required:
+        prefilter:
+          enable:
           - name: Jinli
+        filter:
+          enable:
+          - name: Jinli
+        score:
+          enable:
+          - name: Jinli
+        prebind:
+          enable:
+          - name: Jinli
+        pluginConfig:
+        - name: Jinli
+          args:
+            NodeResourcesFitArgs:
+              scoringStrategy:
+                type: MostAllocated
 
 ---
 apiVersion: v1
