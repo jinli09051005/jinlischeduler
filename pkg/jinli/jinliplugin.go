@@ -20,15 +20,15 @@ import (
 	"fmt"
 
 	"k8s.io/apimachinery/pkg/runtime"
-	"k8s.io/kubernetes/pkg/scheduler/apis/config"
 	"k8s.io/kubernetes/pkg/scheduler/framework"
+	"sigs.k8s.io/scheduler-plugins/apis/config"
 )
 
 const Name = "Jinli"
 
 type Jinli struct {
 	handle framework.Handle
-	Args   *config.NodeResourcesFitArgs
+	Args   *config.JinliArgs
 }
 
 var _ = framework.Plugin(&Jinli{})
@@ -44,7 +44,7 @@ func (jl *Jinli) Name() string {
 
 // New initializes a new plugin and returns it.
 func New(obj runtime.Object, h framework.Handle) (framework.Plugin, error) {
-	args, ok := obj.(*config.NodeResourcesFitArgs)
+	args, ok := obj.(*config.JinliArgs)
 	if !ok {
 		return nil, fmt.Errorf("want args to be of type Args, got %T", obj)
 	}

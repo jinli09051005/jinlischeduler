@@ -6,8 +6,8 @@ import (
 	"math"
 
 	v1 "k8s.io/api/core/v1"
-	"k8s.io/kubernetes/pkg/scheduler/apis/config"
 	"k8s.io/kubernetes/pkg/scheduler/framework"
+	"sigs.k8s.io/scheduler-plugins/apis/config"
 )
 
 func (jl *Jinli) Score(ctx context.Context, state *framework.CycleState, p *v1.Pod, nodeName string) (int64, *framework.Status) {
@@ -22,11 +22,11 @@ func (jl *Jinli) Score(ctx context.Context, state *framework.CycleState, p *v1.P
 	// 打分 normalization 转为[0-10]
 	var score int64
 	// 选择最少使用率节点
-	if jl.Args.ScoringStrategy.Type == config.LeastAllocated {
+	if jl.Args.Type == config.LeastAllocated {
 		score = 10 - int64(math.Round(r.Utilization*10))
 	}
 	// 选择最高使用率节点
-	if jl.Args.ScoringStrategy.Type == config.MostAllocated {
+	if jl.Args.Type == config.MostAllocated {
 		score = int64(math.Round(r.Utilization * 10))
 	}
 

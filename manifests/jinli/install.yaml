@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: scheduler-config
+  name: jinli-scheduler
   namespace: kube-system
 data:
   scheduler-config.yaml: |
@@ -12,46 +12,40 @@ data:
       leaderElect: true
       resourceName: jinli-scheduler
       resourceNamespace: kube-system
-      lockObjectName: jinli-scheduler
       leaseDuration: 15s
       renewDeadline: 10s
       retryPeriod: 2s
-      leaderElectionConfig:
-        useLeaseHold: true
     profiles:
     - schedulerName: jinli-scheduler
       plugins:
-        prefilter:
-          enable:
+        preFilter:
+          enabled:
           - name: Jinli
         filter:
-          enable:
+          enabled:
           - name: Jinli
         score:
-          enable:
+          enabled:
           - name: Jinli
-        prebind:
-          enable:
+        preBind:
+          enabled:
           - name: Jinli
-        pluginConfig:
-        - name: Jinli
-          args:
-            NodeResourcesFitArgs:
-              scoringStrategy:
-                type: MostAllocated
-
+      pluginConfig:
+      - name: Jinli
+        args:
+          type: MostAllocated
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: scheduler-plugins-scheduler
+  name: jinli-scheduler
   namespace: kube-system
 
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: scheduler-plugins-scheduler
+  name: jinli-scheduler
 rules:
 - apiGroups: [""]
   resources: ["namespaces"]
@@ -121,14 +115,14 @@ rules:
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: scheduler-plugins-scheduler
+  name: jinli-scheduler
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: scheduler-plugins-scheduler
+  name: jinli-scheduler
 subjects:
 - kind: ServiceAccount
-  name: scheduler-plugins-scheduler
+  name: jinli-scheduler
   namespace: kube-system
 
 ---
@@ -137,7 +131,7 @@ kind: Deployment
 metadata:
   labels:
     component: scheduler
-  name: scheduler-plugins-scheduler
+  name: jinli-scheduler
   namespace: kube-system
 spec:
   selector:
@@ -149,20 +143,20 @@ spec:
       labels:
         component: scheduler
     spec:
-      serviceAccountName: scheduler-plugins-scheduler
+      serviceAccountName: jinli-scheduler
       containers:
-      - command:
+      - name: jinli-scheduler
+        command:
         - /bin/kube-scheduler
         - --config=/etc/kubernetes/scheduler-config.yaml
-        image: jinli.harbor.com/scheduler/kube-scheduler:v20240506-v0.27.9-5-g580df901-amd64
-        imagePullPolicy: IfNotPresent        
+        image: jinli.harbor.com/jinlik8s-scheduler/kube-scheduler:v20241025--amd64
+        imagePullPolicy: Always        
         livenessProbe:
           httpGet:
             path: /healthz
             port: 10259
             scheme: HTTPS
           initialDelaySeconds: 15
-        name: scheduler-plugins-scheduler
         readinessProbe:
           httpGet:
             path: /healthz
@@ -174,12 +168,12 @@ spec:
         securityContext:
           privileged: false
         volumeMounts:
-        - name: scheduler-config
+        - name: jinli-scheduler
           mountPath: /etc/kubernetes
           readOnly: true
       hostNetwork: false
       hostPID: false
       volumes:
-      - name: scheduler-config
+      - name: jinli-scheduler
         configMap:
-          name: scheduler-config
+          name: jinli-scheduler

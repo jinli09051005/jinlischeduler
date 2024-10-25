@@ -35,6 +35,8 @@ if ! command -v ${BUILDER} && command -v nerdctl >/dev/null; then
   BUILDER=nerdctl
 fi
 
+echo $BUILDER
+
 ARCH=${ARCH:-$(go env GOARCH)}
 if [[ "${ARCH}" == "arm64" ]]; then
   ARCH="arm64v8"

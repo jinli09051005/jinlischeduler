@@ -54,7 +54,5 @@ profiles:
     pluginConfig:
     - name: Jinli
       args:
-        NodeResourcesFitArgs:
-          scoringStrategy:
-            type: MostAllocated
+        type: MostAllocated
 ```

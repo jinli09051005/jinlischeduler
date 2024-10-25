@@ -24,6 +24,15 @@ import (
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
+// JinliArgs defines the scheduling parameters for Jinli plugin.
+type JinliArgs struct {
+	metav1.TypeMeta `json:",inline"`
+	// Type selects which strategy to run.
+	Type ScoringStrategyType `json:"type,omitempty"`
+}
+
+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
+
 // CoschedulingArgs defines the scheduling parameters for Coscheduling plugin.
 type CoschedulingArgs struct {
 	metav1.TypeMeta `json:",inline"`

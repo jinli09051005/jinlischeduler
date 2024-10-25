@@ -4,12 +4,9 @@ leaderElection:
   leaderElect: true
   resourceName: jinli-scheduler
   resourceNamespace: kube-system
-  lockObjectName: "jinli-scheduler"
   leaseDuration: 15s
   renewDeadline: 10s
   retryPeriod: 2s
-  leaderElectionConfig:
-    useLeaseHold: true 
 clientConnection:
   kubeconfig: "REPLACE_ME_WITH_KUBE_CONFIG_PATH"
 profiles:
@@ -30,6 +27,4 @@ profiles:
     pluginConfig:
     - name: Jinli
       args:
-        NodeResourcesFitArgs:
-          scoringStrategy:
-            type: MostAllocated
+        type: MostAllocated
