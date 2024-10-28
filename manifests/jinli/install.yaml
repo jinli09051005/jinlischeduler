@@ -149,7 +149,7 @@ spec:
         command:
         - /bin/kube-scheduler
         - --config=/etc/kubernetes/scheduler-config.yaml
-        image: jinli.harbor.com/jinlik8s-scheduler/kube-scheduler:v20241025--amd64
+        image: jinli.harbor.com/jinlik8s-scheduler/kube-scheduler:v20241025-v1.2.1-amd64
         imagePullPolicy: Always        
         livenessProbe:
           httpGet:

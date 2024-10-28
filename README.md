@@ -10,7 +10,7 @@ Repository for out-of-tree scheduler plugins based on the [scheduler framework](
 apiVersion: v1
 kind: Pod
 metadata:
-  name: cpu-pod
+  name: gpu-pod
 spec:
   schedulerName: jinli-scheduler
   containers:
