@@ -1,4 +1,4 @@
-﻿# KEP: SySched  - System call-based scheduling
+# KEP: SySched  - System call-based scheduling
 
 ## Table of Contents
 

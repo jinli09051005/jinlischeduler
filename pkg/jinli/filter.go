@@ -32,14 +32,15 @@ func (jl *Jinli) Filter(ctx context.Context, state *framework.CycleState, pod *v
 	if node.Annotations == nil {
 		return framework.NewStatus(framework.Error, "failed to get gpumems annotations")
 	}
-	// jinli.io/gpumems=uuid1-1024,uuid2-2048
+	// jinli.io/gpumems=uuid1_1024,uuid2_2048
 	if gpumems, exists := node.Annotations["jinli.io/gpumems"]; !exists {
 		return framework.NewStatus(framework.Error, "failed to get gpumems annotations")
 	} else {
 		us := strings.Split(gpumems, ",")
 		pGPUs = len(us)
 		for i := range us {
-			u := strings.Split(us[i], "-")
+			u := strings.Split(us[i], "_")
+			//GPU-bcc6c7bf-5d8b-3b57-869f-38f00cd334aa_6144
 			if len(u) == 2 {
 				// uuid: mems
 				mem, err := strconv.Atoi(u[1])
