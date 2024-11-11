@@ -54,47 +54,48 @@ func (jl *Jinli) Filter(ctx context.Context, state *framework.CycleState, pod *v
 	}
 
 	// 从Node的所有运行中的Pod中统计出已经使用的资源量
-	// 包括gpumem和gpucores(通过Pod的Container的ENV["UUID"]获取所在的物理GPU使用量)
+	// 包括gpumem和gpucores(通过Pod的Container的Annotations["ContainerName"]获取所在的物理GPU使用量)
 	pods := nodeInfo.Pods
 	for _, v := range pods {
 		var uuids []string
 		var gpumem int
 		var gpucores int
 		if v.Pod != nil {
-			for _, c := range v.Pod.Spec.Containers {
-				if c.Env != nil {
-					for _, env := range c.Env {
-						if env.Name == "UUID" {
-							uuids = strings.Split(env.Value, ",")
-							vGPUUsed += len(uuids)
-						}
-
-						if env.Name == "GPUMEM" {
-							mem, err := strconv.Atoi(env.Value)
-							if err != nil {
-								return framework.NewStatus(framework.Error, fmt.Sprintf("failed to strconv gpumems env: %v", err))
-							}
-							gpumem += mem
-						}
-
-						if env.Name == "GPUCORES" {
-							cores, err := strconv.Atoi(env.Value)
-							if err != nil {
-								return framework.NewStatus(framework.Error, fmt.Sprintf("failed to strconv gpucores env: %v", err))
-							}
-							gpucores += cores
-						}
+			if v.Pod.Annotations != nil {
+				for _, c := range v.Pod.Spec.Containers {
+					if v, ok := v.Pod.Annotations[c.Name]; ok {
+						uuids = strings.Split(v, ",")
+						vGPUUsed += len(uuids)
 					}
-					for _, uuid := range uuids {
-						if _, exists := uuidMemUsed[uuid]; !exists {
-							uuidMemUsed[uuid] = gpumem
-						} else {
-							uuidMemUsed[uuid] += gpumem
+					if c.Env != nil {
+						for _, env := range c.Env {
+							if env.Name == "GPUMEM" {
+								mem, err := strconv.Atoi(env.Value)
+								if err != nil {
+									return framework.NewStatus(framework.Error, fmt.Sprintf("failed to strconv gpumems env: %v", err))
+								}
+								gpumem += mem
+							}
+
+							if env.Name == "GPUCORES" {
+								cores, err := strconv.Atoi(env.Value)
+								if err != nil {
+									return framework.NewStatus(framework.Error, fmt.Sprintf("failed to strconv gpucores env: %v", err))
+								}
+								gpucores += cores
+							}
 						}
-						if _, exists := uuidCoresUsed[uuid]; !exists {
-							uuidCoresUsed[uuid] = gpucores
-						} else {
-							uuidCoresUsed[uuid] += gpucores
+						for _, uuid := range uuids {
+							if _, exists := uuidMemUsed[uuid]; !exists {
+								uuidMemUsed[uuid] = gpumem
+							} else {
+								uuidMemUsed[uuid] += gpumem
+							}
+							if _, exists := uuidCoresUsed[uuid]; !exists {
+								uuidCoresUsed[uuid] = gpucores
+							} else {
+								uuidCoresUsed[uuid] += gpucores
+							}
 						}
 					}
 				}
