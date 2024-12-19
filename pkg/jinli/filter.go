@@ -74,7 +74,7 @@ func (jl *Jinli) Filter(ctx context.Context, state *framework.CycleState, pod *v
 								if err != nil {
 									return framework.NewStatus(framework.Error, fmt.Sprintf("failed to strconv gpumems env: %v", err))
 								}
-								gpumem += mem
+								gpumem = mem
 							}
 
 							if env.Name == "GPUCORES" {
@@ -82,7 +82,7 @@ func (jl *Jinli) Filter(ctx context.Context, state *framework.CycleState, pod *v
 								if err != nil {
 									return framework.NewStatus(framework.Error, fmt.Sprintf("failed to strconv gpucores env: %v", err))
 								}
-								gpucores += cores
+								gpucores = cores
 							}
 						}
 						for _, uuid := range uuids {
